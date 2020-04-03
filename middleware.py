@@ -15,7 +15,7 @@ import numpy as np
 
 import yaml
 
-from aido_schemas import (EpisodeStart, protocol_agent, protocol_scenario_maker, protocol_simulator, RobotObservations,
+from aido_schemas import (EpisodeStart, protocol_agent, protocol_scenario_maker, protocol_simulator_duckiebot1, RobotObservations,
                           RobotPerformance, RobotState, Scenario, ScenarioRobotSpec, RobotConfiguration, SetMap,
                           SetRobotCommands, SimulationState, SpawnRobot,
                           Step, GetRobotState, GetRobotObservations)
@@ -56,21 +56,30 @@ class MyConfig:
     timeout_regular: int
 
 
-def main(log_dir,attempts):
-
+def main():
     # Set in the docker-compose env section
-    config_ = env_as_yaml('experiment_manager_parameters')
+    config_ = env_as_yaml('middleware_parameters')
     logger.info('parameters:\n\n%s' % config_)
     config = cast(MyConfig, object_from_ipce(config_, MyConfig))
 
     # first open all fifos
-    agent_ci = ComponentInterface(config.agent_in, config.agent_out,
-                                  expect_protocol=protocol_agent, nickname="agent",
-                                  timeout=config.timeout_regular)
-    agents = [agent_ci]
+    logger.info("Opening the sim CI")
     sim_ci = ComponentInterface(config.sim_in, config.sim_out,
-                                expect_protocol=protocol_simulator, nickname="simulator",
+                                expect_protocol=protocol_simulator_duckiebot1, nickname="simulator",
                                 timeout=config.timeout_regular)
+
+    logfile = "/fifos3/simlog"
+    ff = open(logfile,"wb")
+    sim_ci.cc(ff)
+    logger.info(f"opened {logfile} as cc")
+
+    #### Temporarily disabled for debugging
+    #logger.info("Opening the agent CI")
+    #agent_ci = ComponentInterface(config.agent_in, config.agent_out,
+    #                              expect_protocol=protocol_agent, nickname="agent",
+    #                              timeout=config.timeout_regular)
+    #agents = [agent_ci]
+
     # sm_ci = ComponentInterface(config.sm_in, config.sm_out,
     #                            expect_protocol=protocol_scenario_maker, nickname="scenario_maker",
     #                            timeout=config.timeout_regular)
@@ -78,11 +87,16 @@ def main(log_dir,attempts):
     # then check compatibility
     # so that everything fails gracefully in case of error
 
-    # sm_ci._get_node_protocol(timeout=config.timeout_initialization)
-    sim_ci._get_node_protocol(timeout=config.timeout_initialization)
-    agent_ci._get_node_protocol(timeout=config.timeout_initialization)
+    logger.info("Waiting before checking protocol...")
 
+    # sm_ci._get_node_protocol(timeout=config.timeout_initialization)
+    logger.info("Checking sim protocol compatibility")
+    sim_ci._get_node_protocol(timeout=config.timeout_initialization)
+    logger.info("Checking agent protocol compatibility")
+    agent_ci._get_node_protocol(timeout=config.timeout_initialization)
+    logger.info("Acquired node protocol")
     check_compatibility_between_agent_and_sim(agent_ci, sim_ci)
+    logger.info("Compatibility verified.")
 
     attempt_i = 0
     # per_episode = {}
@@ -94,8 +108,11 @@ def main(log_dir,attempts):
 
         nfailures = 0
 
+        logger.info("Sending seed to sim")
         sim_ci.write_topic_and_expect_zero('seed', config.seed)
+        logger.info("Sending seed to agent")
         agent_ci.write_topic_and_expect_zero('seed', config.seed)
+        logger.info("Received feedback from peer containers")
 
 
         # TODO this should be in docker-compose or yaml
@@ -124,24 +141,24 @@ def main(log_dir,attempts):
             episode_name = f'episode_{ep}'
             logger.info('Starting episode 1')
 
-            dn_final = os.path.join(log_dir, episode_name)
+            #dn_final = os.path.join(log_dir, episode_name)
 
-            if os.path.exists(dn_final):
-                shutil.rmtree(dn_final)
+            #if os.path.exists(dn_final):
+            #    shutil.rmtree(dn_final)
 
-            dn = os.path.join(attempts, episode_name + '.attempt%s' % attempt_i)
-            if os.path.exists(dn):
-                shutil.rmtree(dn)
+            #dn = os.path.join(attempts, episode_name + '.attempt%s' % attempt_i)
+            #if os.path.exists(dn):
+            #    shutil.rmtree(dn)
 
-            if not os.path.exists(dn):
-                os.makedirs(dn)
-            fn = os.path.join(dn, 'log.gs2.cbor')
+            #if not os.path.exists(dn):
+            #    os.makedirs(dn)
+            #fn = os.path.join(dn, 'log.gs2.cbor')
 
-            fn_tmp = fn + '.tmp'
-            fw = open(fn_tmp, 'wb')
+            #fn_tmp = fn + '.tmp'
+            #fw = open(fn_tmp, 'wb')
 
-            agent_ci.cc(fw)
-            sim_ci.cc(fw)
+            #agent_ci.cc(fw)
+            #sim_ci.cc(fw)
 
             logger.info('Now running episode')
 
@@ -439,10 +456,10 @@ def env_as_yaml(name: str) -> dict:
 
 
 if __name__ == '__main__':
-    logdir = os.path.join(d, 'episodes')
-    attempts = os.path.join(d, 'attempts')
+    #logdir = os.path.join(d, 'episodes')
+    #attempts = os.path.join(d, 'attempts')
     try:
-        main(logdir,attempts)
+        main()
     except RemoteNodeAborted as e:
         msg = 'It appears that one of the remote nodes has aborted.\n' \
               'I will wait 10 seconds before aborting myself so that its\n' \
