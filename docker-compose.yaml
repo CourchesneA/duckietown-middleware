@@ -15,8 +15,8 @@ services:
         max_failures: 2
         agent_in: /fifos3/agent-in
         agent_out: /fifos3/agent-out
-        sim_in: /fifos3/simulator-in
-        sim_out: /fifos3/simulator-out
+        sim_in: /fifos3/simulator-out
+        sim_out: /fifos3/simulator-in
         sm_in: None
         sm_out: None
         timeout_initialization: 15
@@ -25,19 +25,19 @@ services:
       - ./.fifos:/fifos3
 
   simulator:
-    image: duckietown/challenge-aido_lf-simulator-gym:daffy-aido4
-    #image: courchesnea/dt-simbridge:test
+    #image: duckietown/challenge-aido_lf-simulator-gym:daffy-aido4
+    image: courchesnea/dt-simbridge:test
     environment:
       AIDONODE_DATA_IN: /fifos3/simulator-in
       AIDONODE_DATA_OUT: /fifos3/simulator-out
     volumes:
       - ./.fifos:/fifos3
 
-  agent:
-    #image: courchesnea/dt-random:test
-    image: duckietown/challenge-aido_lf-template-random:daffy
-    environment:
-      AIDONODE_DATA_IN: /fifos3/agent-in
-      AIDONODE_DATA_OUT: /fifos3/agent-out
-    volumes:
-      - ./.fifos:/fifos3
+        #  agent:
+        #    image: courchesnea/dt-random:test
+        #    #image: duckietown/challenge-aido_lf-template-random:daffy
+        #    environment:
+        #      AIDONODE_DATA_IN: /fifos3/agent-in
+        #      AIDONODE_DATA_OUT: /fifos3/agent-out
+        #    volumes:
+        #      - ./.fifos:/fifos3
