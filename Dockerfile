@@ -6,6 +6,7 @@ RUN pip install -r requirements.txt
 RUN pip list
 
 COPY . .
+ENV DISABLE_CONTRACTS=1
 
 
 
