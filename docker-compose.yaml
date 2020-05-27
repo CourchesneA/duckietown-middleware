@@ -30,7 +30,7 @@ services:
     #image: courchesnea/dt-simbridge:test
     environment:
       AIDONODE_DATA_IN: /fifos/simulator-in
-      AIDONODE_DATA_OUT: fifos:/fifos/simulator-out
+      AIDONODE_DATA_OUT: fifo:/fifos/simulator-out
     volumes: *volumes
       #- ./.fifos:/fifos3
 
