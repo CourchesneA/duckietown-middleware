@@ -74,10 +74,10 @@ def main():
     #logger.info(f"opened {logfile} as cc")
 
     logger.info("Opening the agent CI")
-    agent_ci = ComponentInterface(config.agent_in, config.agent_out,
-                                  expect_protocol=protocol_agent, nickname="agent",
-                                  timeout=config.timeout_regular)
-    agents = [agent_ci]
+    #agent_ci = ComponentInterface(config.agent_in, config.agent_out,
+    #                              expect_protocol=protocol_agent, nickname="agent",
+    #                              timeout=config.timeout_regular)
+    #agents = [agent_ci]
 
     # sm_ci = ComponentInterface(config.sm_in, config.sm_out,
     #                            expect_protocol=protocol_scenario_maker, nickname="scenario_maker",
