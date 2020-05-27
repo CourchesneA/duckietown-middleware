@@ -68,10 +68,10 @@ def main():
                                 expect_protocol=protocol_simulator, nickname="simulator",
                                 timeout=config.timeout_regular)
 
-    logfile = "/fifos3/simlog"
-    ff = open(logfile,"wb")
-    sim_ci.cc(ff)
-    logger.info(f"opened {logfile} as cc")
+    #logfile = "/fifos3/simlog"
+    #ff = open(logfile,"wb")
+    #sim_ci.cc(ff)
+    #logger.info(f"opened {logfile} as cc")
 
     #### Temporarily disabled for debugging
     #logger.info("Opening the agent CI")
