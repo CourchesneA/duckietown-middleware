@@ -13,26 +13,30 @@ services:
         seed: 42
         physics_dt: 0.05
         max_failures: 2
-        agent_in: /fifos3/agent-in
-        agent_out: /fifos3/agent-out
-        sim_in: /fifos3/simulator-out
-        sim_out: /fifos3/simulator-in
+        agent_in: /fifos/agent-in
+        agent_out: /fifos/agent-out
+        sim_in: /fifos/simulator-in
+        sim_out: /fifos/simulator-out
         sm_in: None
         sm_out: None
         timeout_initialization: 15
         timeout_regular: 30
-    volumes:
-      - ./.fifos:/fifos3
+    volumes: &volumes
+      #- ./.fifos:/fifos3
+      - fifos:/fifos
 
   simulator:
     #image: duckietown/challenge-aido_lf-simulator-gym:daffy-aido4
     image: courchesnea/dt-simbridge:test
     environment:
-      AIDONODE_DATA_IN: /fifos3/simulator-in
-      AIDONODE_DATA_OUT: /fifos3/simulator-out
-    volumes:
-      - ./.fifos:/fifos3
+      AIDONODE_DATA_IN: /fifos/simulator-in
+      AIDONODE_DATA_OUT: /fifos/simulator-out
+    volumes: *volumes
+      #- ./.fifos:/fifos3
 
+
+volumes:
+  fifos:
         #  agent:
         #    image: courchesnea/dt-random:test
         #    #image: duckietown/challenge-aido_lf-template-random:daffy
