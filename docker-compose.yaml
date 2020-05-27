@@ -26,8 +26,8 @@ services:
       - fifos:/fifos
 
   simulator:
-    #image: duckietown/challenge-aido_lf-simulator-gym:daffy-aido4
-    image: courchesnea/dt-simbridge:test
+    image: duckietown/challenge-aido_lf-simulator-gym:daffy-aido4
+    #image: courchesnea/dt-simbridge:test
     environment:
       AIDONODE_DATA_IN: /fifos/simulator-in
       AIDONODE_DATA_OUT: /fifos/simulator-out
