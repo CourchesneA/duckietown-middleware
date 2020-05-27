@@ -73,12 +73,11 @@ def main():
     #sim_ci.cc(ff)
     #logger.info(f"opened {logfile} as cc")
 
-    #### Temporarily disabled for debugging
-    #logger.info("Opening the agent CI")
-    #agent_ci = ComponentInterface(config.agent_in, config.agent_out,
-    #                              expect_protocol=protocol_agent, nickname="agent",
-    #                              timeout=config.timeout_regular)
-    #agents = [agent_ci]
+    logger.info("Opening the agent CI")
+    agent_ci = ComponentInterface(config.agent_in, config.agent_out,
+                                  expect_protocol=protocol_agent, nickname="agent",
+                                  timeout=config.timeout_regular)
+    agents = [agent_ci]
 
     # sm_ci = ComponentInterface(config.sm_in, config.sm_out,
     #                            expect_protocol=protocol_scenario_maker, nickname="scenario_maker",
@@ -91,7 +90,7 @@ def main():
     # sm_ci._get_node_protocol(timeout=config.timeout_initialization)
     logger.info("Checking sim protocol compatibility")
     sim_ci._get_node_protocol(timeout=config.timeout_initialization)
-    logger.info("!!!!>Looks like we never reach this line")
+    logger.info(">Verified sim_ci compatibility, pipes are connected !")
     logger.info("Checking agent protocol compatibility")
     agent_ci._get_node_protocol(timeout=config.timeout_initialization)
     logger.info("Acquired node protocol")
