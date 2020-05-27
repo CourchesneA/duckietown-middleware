@@ -15,8 +15,8 @@ services:
         max_failures: 2
         agent_in: /fifos/agent-in
         agent_out: /fifos/agent-out
-        sim_in: /fifos/simulator-out
-        sim_out: /fifos/simulator-in
+        sim_in: /fifos/simulator-in
+        sim_out: /fifos/simulator-out
         sm_in: None
         sm_out: None
         timeout_initialization: 15
